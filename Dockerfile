@@ -1,11 +1,11 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-slim
+FROM python:3.9.7
+  
+WORKDIR /use/src/application
 
-WORKDIR /app
-
-COPY requirements.txt .
+COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY . . 
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.index:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
