@@ -1,18 +1,25 @@
+# Base image
 FROM python:3.9-slim-buster
 
-WORKDIR /usr/app
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install virtualenv
+# Set the working directory
+WORKDIR /app
 
-RUN virtualenv venv
+# Install system dependencies
+RUN apt-get update && apt-get install -y netcat && apt-get clean
 
-SHELL ["bash", "-c"]
-RUN source /app/venv/bin/activate
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-COPY . /usr/app
+# Copy the application code
+COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Expose the port on which the application will run
 EXPOSE 8000
 
-CMD ["uvicorn", "app.index:app", "--host", "0.0.0.0", "--port", "8000", "reload"]
+# Start the application
+CMD ["uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000"]
